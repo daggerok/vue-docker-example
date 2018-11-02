@@ -1,0 +1,8 @@
+**
+!nginx
+!public
+!src
+!tests
+!babel.config.js
+!cypress.json
+!package*.json

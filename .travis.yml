@@ -1,0 +1,32 @@
+service:
+  - docker
+addons:
+  apt:
+    packages:
+      - sudo
+      - lsof
+      - wget
+      - bash
+      - curl
+      - docker-ce
+      - python-pip
+install: true
+before_install:
+- sudo pip install docker-compose httpie >/dev/null 2>&1
+- source <(curl -s https://raw.githubusercontent.com/daggerok/bash-functions/master/main.bash)
+- stop_any 3000 6379
+script:
+- docker-compose build --pull --force-rm >/dev/null
+- docker-compose up -V &
+- while [[ $(docker ps -n 1 --quiet --filter health=healthy --filter status=running | wc -l) -lt 1 ]] ; do
+    echo -ne '.' ;
+    sleep 1s ;
+  done
+- http :80
+- sleep 1s
+- http :80
+- docker-compose down -v --rmi local || true
+cache:
+  packages: true
+  directories:
+  - $HOME/.docker
