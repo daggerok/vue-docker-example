@@ -18,7 +18,7 @@ before_install:
 script:
 - docker-compose build --pull --force-rm >/dev/null
 - docker-compose up -V &
-- while [[ $(docker ps -n 1 --quiet --filter health=healthy --filter status=running | wc -l) -lt 1 ]] ; do
+- while [[ $(docker ps -n 2 -q -f health=healthy -f status=running | wc -l) -lt 2 ]] ; do
     echo -ne '.' ;
     sleep 1s ;
   done
