@@ -1,16 +1,18 @@
 version: '2.2'
+networks:
+  internal:
+    driver: bridge
+  external:
+    driver: bridge
 services:
   app:
     build: .
     networks:
       internal:
         aliases:
-        - app
+          - app
   proxy:
     restart: on-failure
-    #    depends_on:
-    #      application:
-    #        condition: service_healthy
     image: nginx:1.15.5-alpine
     volumes: ['./proxy/default.conf:/etc/nginx/conf.d/default.conf']
     ports: ['80:80']
@@ -23,8 +25,3 @@ services:
       test: wget --quiet --tries=1 --spider http://127.0.0.1:80/ || exit 1
       timeout: 1s
       retries: 99
-networks:
-  internal:
-    driver: bridge
-  external:
-    driver: bridge
