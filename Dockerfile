@@ -1,5 +1,7 @@
 FROM node:10.13.0-alpine as builder
 LABEL MAINTAINER='Maksim Kostromin https://github.com/daggerok'
+# https://github.com/cypress-io/cypress/issues/1243
+ENV CI=1
 WORKDIR /src/app
 COPY ./package.json package-lock.json ./
 RUN npm i && npm cache clean --force
@@ -14,3 +16,5 @@ HEALTHCHECK --timeout=1s --retries=99 \
 RUN apk add --update --upgrade --no-cache python2
 ADD ./nginx/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /src/app/dist /usr/share/nginx/html
+COPY --from=builder /src/app /tmp/src-app
+COPY --from=builder /root /tmp/root
